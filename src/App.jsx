@@ -5,6 +5,8 @@ import Lobby from './components/Lobby';
 import useGame from './hooks/useGame';
 import { io } from 'socket.io-client';
 import { getBestMove } from './utils/ai';
+import { translations } from './utils/translations';
+import { FlagUS, FlagVN, FlagJP, FlagCN, FlagES } from './components/FlagIcons';
 
 function App() {
   const [screen, setScreen] = useState('menu'); // 'menu', 'lobby', 'game'
@@ -18,6 +20,9 @@ function App() {
   const [isWaiting, setIsWaiting] = useState(false);
   const [rematchStatus, setRematchStatus] = useState(null); // null, 'pending', 'rejected'
   const [userCount, setUserCount] = useState(0);
+
+  const [language, setLanguage] = useState('en');
+  const t = translations[language];
 
   const {
     squares,
@@ -52,7 +57,6 @@ function App() {
     if (!socket) return;
 
     const onConnect = () => console.log('Connected');
-    // ...
 
     const onRoomJoined = ({ roomId, player, size }) => {
       setRoomId(roomId);
@@ -78,13 +82,13 @@ function App() {
     };
 
     const onOpponentLeft = ({ winner }) => {
-      alert('Opponent disconnected. You win!');
+      alert(t.opponentDisconnect);
       setIsWaiting(false);
       setRematchStatus(null);
     };
 
     const onRematchProposed = () => {
-      if (window.confirm("Opponent wants a rematch. Accept?")) {
+      if (window.confirm(t.rematchPropose)) {
         socket.emit('respond_rematch', { roomId, accept: true });
       } else {
         socket.emit('respond_rematch', { roomId, accept: false });
@@ -123,7 +127,7 @@ function App() {
       socket.off('rematch_rejected', onRematchRejected);
       socket.off('game_reset', onGameReset);
     };
-  }, [socket, makeMove, resetGame, playerSymbol, boardSize, roomId]);
+  }, [socket, makeMove, resetGame, playerSymbol, boardSize, roomId, t]);
 
   // AI Logic Effect
   useEffect(() => {
@@ -170,13 +174,13 @@ function App() {
     <div className="app-container">
       {screen === 'menu' && (
         <div className="glass-panel card">
-          <h1>Gamocaro</h1>
+          <h1>{t.title}</h1>
           <div className="controls" style={{ flexDirection: 'column', gap: '1rem' }}>
-            <button onClick={() => handleMenuStart('ai')}>Play vs AI</button>
-            <button onClick={() => handleMenuStart('multiplayer')}>Multiplayer Online</button>
+            <button onClick={() => handleMenuStart('ai')}>{t.playAi}</button>
+            <button onClick={() => handleMenuStart('multiplayer')}>{t.playOnline}</button>
 
             <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <label>Board Size (AI Only): {boardSize}x{boardSize}</label>
+              <label>{t.boardSizeAi}: {boardSize}x{boardSize}</label>
               <input
                 type="range"
                 min="5"
@@ -185,9 +189,98 @@ function App() {
                 onChange={(e) => setBoardSize(parseInt(e.target.value))}
               />
             </div>
+
+            {/* Language Selector */}
+            <div style={{ display: 'flex', gap: '0.8rem', justifyContent: 'center', marginTop: '1rem' }}>
+              <button
+                onClick={() => setLanguage('en')}
+                style={{
+                  padding: '4px',
+                  opacity: language === 'en' ? 1 : 0.5,
+                  background: language === 'en' ? 'rgba(255,255,255,0.2)' : 'none',
+                  border: '1px solid transparent',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  transition: 'all 0.2s'
+                }}
+                title="English"
+              >
+                <FlagUS />
+              </button>
+              <button
+                onClick={() => setLanguage('vi')}
+                style={{
+                  padding: '4px',
+                  opacity: language === 'vi' ? 1 : 0.5,
+                  background: language === 'vi' ? 'rgba(255,255,255,0.2)' : 'none',
+                  border: '1px solid transparent',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  transition: 'all 0.2s'
+                }}
+                title="Tiếng Việt"
+              >
+                <FlagVN />
+              </button>
+              <button
+                onClick={() => setLanguage('ja')}
+                style={{
+                  padding: '4px',
+                  opacity: language === 'ja' ? 1 : 0.5,
+                  background: language === 'ja' ? 'rgba(255,255,255,0.2)' : 'none',
+                  border: '1px solid transparent',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  transition: 'all 0.2s'
+                }}
+                title="日本語"
+              >
+                <FlagJP />
+              </button>
+              <button
+                onClick={() => setLanguage('zh')}
+                style={{
+                  padding: '4px',
+                  opacity: language === 'zh' ? 1 : 0.5,
+                  background: language === 'zh' ? 'rgba(255,255,255,0.2)' : 'none',
+                  border: '1px solid transparent',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  transition: 'all 0.2s'
+                }}
+                title="中文"
+              >
+                <FlagCN />
+              </button>
+              <button
+                onClick={() => setLanguage('es')}
+                style={{
+                  padding: '4px',
+                  opacity: language === 'es' ? 1 : 0.5,
+                  background: language === 'es' ? 'rgba(255,255,255,0.2)' : 'none',
+                  border: '1px solid transparent',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  transition: 'all 0.2s'
+                }}
+                title="Español"
+              >
+                <FlagES />
+              </button>
+            </div>
           </div>
           <p style={{ marginTop: '1rem', fontSize: '0.9rem', opacity: 0.8 }}>
-            Online Users: {userCount}
+            {t.onlineUsers}: {userCount}
           </p>
         </div>
       )}
@@ -197,6 +290,7 @@ function App() {
           <Lobby
             socket={socket}
             onBack={() => { setScreen('menu'); setGameMode('ai'); }}
+            t={t}
           />
         </div>
       )}
@@ -209,30 +303,30 @@ function App() {
                 setGameMode('ai');
               }
               setScreen('menu');
-            }}>Back to Menu</button>
+            }}>{t.backToMenu}</button>
 
             <span style={{ fontWeight: 'bold', fontFamily: 'Nunito, sans-serif' }}>
               {winner
-                ? (winner === 'Draw' ? 'Game Draw!' : <span>Winner: <span className={winner === 'X' ? 'status-x' : 'status-o'}>{winner}</span></span>)
+                ? (winner === 'Draw' ? t.draw : <span>{t.winner}: <span className={winner === 'X' ? 'status-x' : 'status-o'}>{winner}</span></span>)
                 : (gameMode === 'multiplayer'
-                  ? (isWaiting ? 'Waiting for opponent...' : <span>You are: <span className={playerSymbol === 'X' ? 'status-x' : 'status-o'}>{playerSymbol}</span> - {isMyTurn ? 'Your Turn' : "Opponent's Turn"}</span>)
-                  : <span>Turn: {xIsNext ? <span className="status-x">X (You)</span> : <span className="status-o">O (AI)</span>}</span>)
+                  ? (isWaiting ? t.waiting : <span>{t.youAre}: <span className={playerSymbol === 'X' ? 'status-x' : 'status-o'}>{playerSymbol}</span> - {isMyTurn ? t.yourTurn : t.opponentTurn}</span>)
+                  : <span>{t.turn}: {xIsNext ? <span className="status-x">X ({t.you})</span> : <span className="status-o">O ({t.ai})</span>}</span>)
               }
             </span>
 
-            {gameMode === 'ai' && <button onClick={() => resetGame(boardSize, boardSize)}>Restart</button>}
+            {gameMode === 'ai' && <button onClick={() => resetGame(boardSize, boardSize)}>{t.restart}</button>}
 
             {gameMode === 'multiplayer' && winner && (
               <div>
                 {rematchStatus === 'pending' ? (
-                  <button disabled>Request Sent...</button>
+                  <button disabled>{t.rematchSent}</button>
                 ) : rematchStatus === 'rejected' ? (
-                  <span style={{ color: 'red', marginLeft: '10px' }}>Rematch Declined</span>
+                  <span style={{ color: 'red', marginLeft: '10px' }}>{t.rematchDeclined}</span>
                 ) : (
                   <button onClick={() => {
                     socket.emit('request_rematch', roomId);
                     setRematchStatus('pending');
-                  }}>Rematch</button>
+                  }}>{t.rematch}</button>
                 )}
               </div>
             )}

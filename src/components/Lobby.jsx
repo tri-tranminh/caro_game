@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Lobby = ({ socket, onJoinGame, onBack }) => {
+const Lobby = ({ socket, onJoinGame, onBack, t }) => {
     const [rooms, setRooms] = useState([]);
     const [newRoomSize, setNewRoomSize] = useState(15);
 
@@ -42,13 +42,13 @@ const Lobby = ({ socket, onJoinGame, onBack }) => {
                     zIndex: 10
                 }}
             >
-                Back
+                {t.back}
             </button>
-            <h2 style={{ marginTop: '0.5rem' }}>Multiplayer Lobby</h2>
+            <h2 style={{ marginTop: '0.5rem' }}>{t.lobbyTitle}</h2>
 
             <div className="create-room-section" style={{ marginBottom: '2rem', padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                <h3>Create New Game</h3>
-                <label>Board Size: {newRoomSize}x{newRoomSize}</label>
+                <h3>{t.createGame}</h3>
+                <label>{t.boardSize}: {newRoomSize}x{newRoomSize}</label>
                 <input
                     type="range"
                     min="5"
@@ -56,13 +56,13 @@ const Lobby = ({ socket, onJoinGame, onBack }) => {
                     value={newRoomSize}
                     onChange={(e) => setNewRoomSize(parseInt(e.target.value))}
                 />
-                <button onClick={createRoom}>Create Room</button>
+                <button onClick={createRoom}>{t.createRoom}</button>
             </div>
 
             <div className="room-list">
-                <h3>Available Rooms</h3>
+                <h3>{t.availableRooms}</h3>
                 {rooms.length === 0 ? (
-                    <p>No public rooms available. Create one!</p>
+                    <p>{t.noRooms}</p>
                 ) : (
                     <ul style={{ listStyle: 'none', padding: 0 }}>
                         {rooms.map((room) => (
@@ -75,8 +75,8 @@ const Lobby = ({ socket, onJoinGame, onBack }) => {
                                 justifyContent: 'space-between',
                                 alignItems: 'center'
                             }}>
-                                <span>Room #{room.id} ({room.size}x{room.size}) - Players: {room.players}/2</span>
-                                <button onClick={() => socket.emit('join_room', room.id)}>Join</button>
+                                <span>{t.room} #{room.id} ({room.size}x{room.size}) - {t.players}: {room.players}/2</span>
+                                <button onClick={() => socket.emit('join_room', room.id)}>{t.join}</button>
                             </li>
                         ))}
                     </ul>

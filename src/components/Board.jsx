@@ -11,8 +11,8 @@ const Board = ({ rows, cols, squares, onClick, winningSquares, lastMoveIndex }) 
         <div
             className="board"
             style={{
-                gridTemplateColumns: `repeat(${cols}, 1fr)`,
-                gridTemplateRows: `repeat(${rows}, 1fr)`,
+                gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+                gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
                 aspectRatio: `${cols} / ${rows}`
             }}
         >

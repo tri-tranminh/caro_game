@@ -48,6 +48,8 @@
     margin: 0;
     border-radius: 4px;
     /* Slight rounding looks modern */
+    overflow: hidden;
+    line-height: 1;
 }
 
 .cell:hover:not(:disabled) {
