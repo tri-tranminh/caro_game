@@ -8,6 +8,7 @@
 
 /* Base App Layout */
 /* Base App Layout */
+/* Base App Layout */
 .app-container {
   display: flex;
   flex-direction: column;
@@ -16,7 +17,8 @@
   height: 100dvh;
   /* Mobile viewport fix */
   max-height: 100dvh;
-  width: 100vw;
+  width: 100%;
+  /* Changed from 100vw to fix wide screen alignment */
   padding: 1rem;
   overflow: hidden;
   /* Prevent global scroll */
